@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { ApiService, GResponse } from '../api.service';
+import { ApiService, UserLoginResponse } from '../api/api.service';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment';
 
 
-declare var google: any;
+declare const google: any;
 
 @Component({
   selector: 'app-login',
@@ -15,13 +16,17 @@ export class LoginComponent implements OnInit {
   constructor(private api: ApiService, private router: Router) { }
 
   ngOnInit(): void {
-
+    setTimeout(() => {
+    
+    
     google.accounts.id.initialize({
-      client_id: '833526689438-ulkroa81smqr629i2akgjvfuflnqrku1.apps.googleusercontent.com',
+      client_id: environment.GCLIENT_ID,
       callback: (res: any) => {
-        this.api.loginUser(res).subscribe((resp: GResponse) => {
-          alert(resp);
-          this.router.navigate(['dashboard']);
+        this.api.loginUser(res).subscribe((resp: UserLoginResponse) => {
+          if(resp.loginStatus){
+            alert(resp.loginStatus);
+          this.router.navigate(['home']);
+          }
         });
       }
     });
@@ -37,7 +42,9 @@ export class LoginComponent implements OnInit {
       logo_alignment: 'left'
     });
 
+  }, 2000);
 
   }
+
 
 }
